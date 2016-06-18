@@ -34,6 +34,7 @@ public class VillagerController : MonoBehaviour {
     }
 
     void MovementHandlerTick() {
+        Vector3 from = transform.position;
         Vector3 to;
         switch (state) {
             case 0:
@@ -46,13 +47,15 @@ public class VillagerController : MonoBehaviour {
                 break;
         }
 
-        // Check distance disregarding y position
-        Vector3 movePos = Vector3.MoveTowards(transform.position, to, moveSpeed*Time.deltaTime);
-        Vector3 checkPos = movePos;
-        checkPos.y = 0;
+        // Disregard y position between the two points
+        from.y = 0;
         to.y = 0;
-        if (Vector3.Distance(checkPos, to) < 0.1) {
-            // Goal reached
+
+        // Move
+        transform.position = Vector3.MoveTowards(from, to, moveSpeed*Time.deltaTime);
+
+        // Change destination when goal is reached
+        if (from == to) {
             switch (state) {
                 case 0:
                     state = 1;
@@ -63,7 +66,5 @@ public class VillagerController : MonoBehaviour {
                     break;
             }
         }
-
-        transform.position = movePos;
     }
 }
