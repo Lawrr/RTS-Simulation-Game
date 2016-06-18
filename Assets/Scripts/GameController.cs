@@ -2,67 +2,62 @@
 
 public class GameController : MonoBehaviour {
 
-    private GameObject selectedBuilding;
-    private bool buildingSelected = false;
-    private bool buildingSpawned = false;
-    private bool guiPressed = false;
+    private GameObject selectedBuilding = null;
 
 	// Use this for initialization
 	void Start() {
-	
+
 	}
 	
 	// Update is called once per frame
     void Update() {
-        BuildingCreationHandler();
+        BuildingCreationHandlerTick();
     }
 
     void OnGUI() {
         GUI.Box(new Rect(Screen.width / 2, Screen.height - 110, 100, 100), "Buildings");
-        if (GUI.Button(new Rect(Screen.width / 2 + 10, Screen.height - 85, 80, 70), "House") && !buildingSelected) {
-            guiPressed = true;
-            buildingSelected = true;
-            buildingSpawned = false;
+
+        // House
+        if (GUI.Button(new Rect(Screen.width / 2 + 10, Screen.height - 85, 80, 70), "House") && !selectedBuilding) {
+            CreateBuildingBlueprint(Resources.Load("Prefabs/House"),
+                Input.mousePosition,
+                Quaternion.Euler(270, 0, 0));
         }
     }
 
-    void BuildingCreationHandler() {
-        if (buildingSelected) {
-            if (!buildingSpawned) {
-                buildingSpawned = true;
-                selectedBuilding = (GameObject) Instantiate(Resources.Load("Baker House/Prefabs/Baker_house"),
-                                               Input.mousePosition,
-                                               Quaternion.Euler(270, 0, 0));
+    // Show blueprint of building
+    void CreateBuildingBlueprint(Object obj, Vector3 pos, Quaternion angle) {
+        selectedBuilding = (GameObject) Instantiate(obj, pos, angle);
 
-                Renderer renderer = selectedBuilding.GetComponent<Renderer>();
-                renderer.material.shader = Shader.Find("Standard");
-                Color color = renderer.material.color;
-                color.a = 0.5f;
-                renderer.material.color = color;
-            }
+        Renderer renderer = selectedBuilding.GetComponent<Renderer>();
+        renderer.material.shader = Shader.Find("Standard");
+        renderer.material.color = new Color(0.5f, 1, 0.5f, 0.7f);
+    }
 
+    void BuildingCreationHandlerTick() {
+        if (selectedBuilding) {
+            // Get terrain hit
             Ray ray = GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
-                if (hit.collider.tag == "Terrain") {
-                    selectedBuilding.transform.position = hit.point;
-                }
+            if (Physics.Raycast(ray, out hit, 1 << LayerMask.NameToLayer("Terrain"))) {
+                selectedBuilding.transform.position = hit.point;
             }
 
-            if (Input.GetMouseButtonUp(0)) {
-                if (guiPressed) {
-                    guiPressed = false;
-                } else {
-                    Renderer renderer = selectedBuilding.GetComponent<Renderer>();
-                    renderer.material.shader = Shader.Find("Diffuse");
-                    Color color = renderer.material.color;
-                    color.a = 1;
-                    renderer.material.color = color;
+            // Place building on click
+            BuildingController bc = selectedBuilding.GetComponent<BuildingController>();
+            if (Input.GetMouseButtonUp(0) && bc.canPlace) {
+                // Place down building
+                Renderer renderer = selectedBuilding.GetComponent<Renderer>();
+                renderer.material.shader = Shader.Find("Diffuse");
+                renderer.material.color = new Color(1, 1, 1, 1);
 
-                    buildingSelected = false;
-                    selectedBuilding = null;
-                }
+                // Spawn villager
+                Instantiate(Resources.Load("Prefabs/Villager"),
+                    selectedBuilding.transform.position,
+                    Quaternion.Euler(270, 0, 0));
+
+                bc.placed = true;
+                selectedBuilding = null;
             }
         }
     }
