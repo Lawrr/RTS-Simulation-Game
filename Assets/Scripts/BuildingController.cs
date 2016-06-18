@@ -5,6 +5,7 @@ public class BuildingController : MonoBehaviour {
     public bool placed = false;
     public bool canPlace;
 
+    // Number of other buildings this is triggered on
     private int triggers = 0;
 
     // Use this for initialization
