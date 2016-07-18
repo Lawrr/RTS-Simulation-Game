@@ -4,12 +4,12 @@ public class GameController : MonoBehaviour {
 
     private GameObject selectedBuilding = null;
 
-	// Use this for initialization
-	void Start() {
+    // Use this for initialization
+    void Start() {
 
-	}
-	
-	// Update is called once per frame
+    }
+    
+    // Update is called once per frame
     void Update() {
         BuildingCreationHandlerTick();
     }

@@ -5,15 +5,15 @@ public class CamController : MonoBehaviour {
     private Vector3 focus = Vector3.zero;
     private Vector3 lastPos;
 
-	// Use this for initialization
-	void Start() {
-	
-	}
-	
-	// Update is called once per frame
-	void Update() {
-	    MouseHandler();
-	}
+    // Use this for initialization
+    void Start() {
+    
+    }
+    
+    // Update is called once per frame
+    void Update() {
+        MouseHandler();
+    }
 
     void OnGUI() {
         GUI.Box(new Rect(Screen.width - 210, Screen.height - 100, 200, 90), "Camera Operations");

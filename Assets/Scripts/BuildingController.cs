@@ -9,14 +9,14 @@ public class BuildingController : MonoBehaviour {
     private int triggers = 0;
 
     // Use this for initialization
-	void Start () {
-	    canPlace = true;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    void Start () {
+        canPlace = true;
+    }
+    
+    // Update is called once per frame
+    void Update () {
 
-	}
+    }
 
     void OnTriggerEnter(Collider other) {
         if (!placed && other.tag == "Building") {
