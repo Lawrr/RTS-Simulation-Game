@@ -2,23 +2,18 @@
 
 public class BuildingController : MonoBehaviour {
 
-    public bool placed = false;
-    public bool canPlace;
+    public bool canPlace { get; private set; }
+    public bool placed { get; set; }
 
     // Number of other buildings this is triggered on
     private int triggers = 0;
 
-    // Use this for initialization
-    void Start () {
+    private void Start() {
         canPlace = true;
-    }
-    
-    // Update is called once per frame
-    void Update () {
-
+        placed = false;
     }
 
-    void OnTriggerEnter(Collider other) {
+    private void OnTriggerEnter(Collider other) {
         if (!placed && other.tag == "Building") {
             triggers++;
             canPlace = false;
@@ -27,7 +22,7 @@ public class BuildingController : MonoBehaviour {
         }
     }
 
-    void OnTriggerExit(Collider other) {
+    private void OnTriggerExit(Collider other) {
         if (!placed && other.tag == "Building") {
             // Make sure we're no longer triggered on anything
             if (--triggers == 0) {

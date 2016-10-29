@@ -1,51 +1,42 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class VillagerController : MonoBehaviour {
 
     private float moveSpeed = 5;
-    private Vector3 startPos;
     private int state = 0;
+    private List<Destination> destinations = new List<Destination>();
 
-    // Use this for initialization
-    void Start() {
-        startPos = transform.position;
+    private void Start() {
+        destinations.Add(new Destination(transform.position));
+        destinations.Add(new Destination(Vector3.zero));
+        destinations.Add(new Destination(new Vector3(10, 0, 10)));
+        destinations.Add(new Destination(Vector3.zero));
     }
 
-    // Update is called once per frame
-    void Update() {
+    private void Update() {
         MovementHandlerTick();
-
         GroundHandlerTick();
     }
 
     // Change y axis depending on ground position
-    void GroundHandlerTick() {
+    private void GroundHandlerTick() {
         Ray rayDown = new Ray(transform.position, Vector3.down);
         Ray rayUp = new Ray(transform.position, Vector3.up);
         RaycastHit hit;
 
         if (Physics.Raycast(rayDown, out hit, 1 << LayerMask.NameToLayer("Terrain")) ||
             Physics.Raycast(rayUp, out hit, 1 << LayerMask.NameToLayer("Terrain"))) {
-            Vector3 pos = transform.position;
-            pos.y = hit.point.y;
+            Vector3 position = transform.position;
+            position.y = hit.point.y;
 
-            transform.position = pos;
+            transform.position = position;
         }
     }
 
-    void MovementHandlerTick() {
+    private void MovementHandlerTick() {
         Vector3 from = transform.position;
-        Vector3 to;
-        switch (state) {
-            case 0:
-                to = Vector3.zero;
-                break;
-
-            case 1:
-            default:
-                to = startPos;
-                break;
-        }
+        Vector3 to = destinations[state].position;
 
         // Disregard y position between the two points
         from.y = 0;
@@ -56,15 +47,7 @@ public class VillagerController : MonoBehaviour {
 
         // Change destination when goal is reached
         if (from == to) {
-            switch (state) {
-                case 0:
-                    state = 1;
-                    break;
-
-                case 1:
-                    state = 0;
-                    break;
-            }
+            state = (state + 1) % destinations.Count;
         }
     }
 }

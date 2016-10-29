@@ -3,18 +3,12 @@
 public class GameController : MonoBehaviour {
 
     private GameObject selectedBuilding = null;
-
-    // Use this for initialization
-    void Start() {
-
-    }
     
-    // Update is called once per frame
-    void Update() {
+    private void Update() {
         BuildingCreationHandlerTick();
     }
 
-    void OnGUI() {
+    private void OnGUI() {
         GUI.Box(new Rect(Screen.width / 2, Screen.height - 110, 100, 100), "Buildings");
 
         // House
@@ -26,7 +20,7 @@ public class GameController : MonoBehaviour {
     }
 
     // Show blueprint of building
-    void CreateBuildingBlueprint(Object obj, Vector3 pos, Quaternion angle) {
+    private void CreateBuildingBlueprint(Object obj, Vector3 pos, Quaternion angle) {
         selectedBuilding = (GameObject) Instantiate(obj, pos, angle);
 
         Renderer renderer = selectedBuilding.GetComponent<Renderer>();
@@ -34,7 +28,7 @@ public class GameController : MonoBehaviour {
         renderer.material.color = new Color(0.5f, 1, 0.5f, 0.7f);
     }
 
-    void BuildingCreationHandlerTick() {
+    private void BuildingCreationHandlerTick() {
         if (selectedBuilding) {
             // Get terrain hit
             Ray ray = GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
